@@ -1,5 +1,4 @@
 import io
-import sympy
 from starlette.responses import StreamingResponse
 from datetime import date
 import users
@@ -7,6 +6,7 @@ from fastapi import FastAPI, File, Depends
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 import cv2
 import numpy as np
+import math
 
 app = FastAPI()
 security = HTTPBasic()
@@ -27,8 +27,14 @@ async def invert_image(image: bytes = File(...)):
 
 
 @app.get("/prime/{num}")
-async def primes(num):
-    flag = sympy.isprime(num)
+async def primes(num: int):
+    flag = True
+    if num > 1:
+        for i in range(2, int(math.sqrt(num) + 1)):
+            if (num % i) == 0:
+                flag = False
+                break
+
     return {"Is prime": flag}
 
 
